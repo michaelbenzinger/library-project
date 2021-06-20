@@ -1,0 +1,28 @@
+html {
+  padding: 1em;
+  font-family: Helvetica, Arial, sans-serif
+}
+.card {
+  padding: 0.8em 0.8em 1.4em 0.8em;;
+  border: 1px solid rgb(192, 192, 192);
+  border-radius: .6em;
+  max-width: 12em;
+}
+.color-block {
+  background-color: dodgerblue;
+  padding: 5rem;
+  margin-bottom: .8rem;
+}
+.title {
+  font-size: 1.6em;
+  font-weight: bold;
+  margin-bottom: 0.2rem;
+}
+.author {
+  font-size: 1em;
+  margin-bottom: 0.5rem;
+}
+.pages {
+  font-size: 0.9em;
+  color: rgb(85, 85, 85);
+}
