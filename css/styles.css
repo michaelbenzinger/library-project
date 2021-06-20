@@ -2,24 +2,41 @@ html {
   padding: 1em;
   font-family: Helvetica, Arial, sans-serif
 }
+.app-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  height: 95vh;
+  width: 40em;
+  margin: 0 auto;
+}
+.card-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1em 1.2em;
+}
 .card {
-  padding: 0.8em 0.8em 1.4em 0.8em;;
-  border: 1px solid rgb(192, 192, 192);
-  border-radius: .6em;
-  max-width: 12em;
+  padding: 1.6em 1em 0 1em;
+  /* padding: 2em 0.8em 8.6em 0.8em; */
+  /* border: 1px solid rgb(192, 192, 192); */
+  border-radius: 0.5em;
+  /* max-width: 11em; */
+  height: 14em;
 }
 .color-block {
-  background-color: dodgerblue;
+  /* background-color: dodgerblue; */
   padding: 5rem;
   margin-bottom: .8rem;
 }
 .title {
-  font-size: 1.6em;
+  font-size: 1.8em;
   font-weight: bold;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.5rem;
+  width: 80%;
 }
 .author {
-  font-size: 1em;
+  font-size: 1.2em;
   margin-bottom: 0.5rem;
 }
 .pages {
