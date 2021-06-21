@@ -1,5 +1,6 @@
 let myLibrary = [];
 const cardContainer = document.querySelector('.card-container');
+let bookId = 1000;
 
 function Book(title, author, pages, read) {
   this.title = title;
@@ -12,10 +13,79 @@ function Book(title, author, pages, read) {
   //   return `${title} by ${author}, ${pages} pages, ${readText}`;
   // }
   this.isRead = function() {
-    return read ? "read" : "not read yet";
+    return this.read ? "read" : "not read yet";
   }
+  this.bookId = bookId;
+  bookId ++;
 }
 
+const titleBar = document.querySelector('.title-bar');
+
+function takeInput (element) {
+  const inputField = document.createElement('textarea');
+  inputField.classList.add('elementInput');
+  inputField.setAttribute('placeholder', element.innerText);
+  inputField.style.width = getComputedStyle(element).width;
+  console.log(getComputedStyle(element).width);
+  inputField.style.height = element.offsetHeight + "px";
+  eFS = getComputedStyle(element).fontSize;
+  eFS = eFS.substring(0, eFS.length - 2);
+  inputField.style.fontSize = eFS + 'px';
+  inputField.style.fontWeight = getComputedStyle(element).fontWeight;
+  inputField.style.margin = getComputedStyle(element).margin;
+  inputField.style.padding = getComputedStyle(element).padding;
+
+  inputField.addEventListener('focusout', function(e) {
+    applyInput(element);
+  });
+  inputField.addEventListener('keydown', function(e) {
+    if (e.code == 'Enter') {
+      this.blur();
+    }
+  });
+
+  element.style.display = "none";
+  element.parentElement.insertBefore(inputField,element);
+  inputField.focus();
+}
+
+function applyInput (element) {
+  const completedInput = document.querySelector('.elementInput');
+  const userInput = completedInput.value;
+  if (userInput != "") {
+    // element.innerText = userInput;
+    // console.log(element.getAttribute('data-bookId'));
+    let thisBook = myLibrary.find(book => {
+      return book.bookId == element.getAttribute('data-bookId');
+    });
+    // console.log(element.classList[0]);
+    // console.log(userInput);
+    if (element.classList[0]=='read') {
+      if (userInput == "read" || userInput == "true") {
+        thisBook.read = true;
+      } else if (userInput == "not read yet" || userInput == "false") {
+        thisBook.read = false;
+      }
+    } else if (element.classList[0]=='pages') {
+      if (Number.isInteger(userInput)) {
+        thisBook.pages = userInput;
+      }
+    } else {
+      thisBook[element.classList[0]] = userInput;
+    }
+    console.log(thisBook);
+  }
+  completedInput.remove();
+  // element.style.display = "inline"
+  displayAll();
+}
+
+function enterToTab (myEvent) {
+  // console.log("entering it");
+  if (myEvent.keyCode == 13) {
+    myEvent.keyCode = 9;
+  }
+}
 
 // auxiliary functions
 function generatePalette() { // split comp 3 colors
@@ -25,8 +95,8 @@ function generatePalette() { // split comp 3 colors
     Math.random()]; // hsl
   const c1Lum = getLuminance(hslToRgb(color1[0]/360,color1[1],color1[2]));
 
-  if (c1Lum < 0.45) { // color 1 is dark
-    console.log("color 1 is dark: " + Math.floor(c1Lum*100));
+  if (c1Lum < 0.4) { // color 1 is dark
+    // console.log("color 1 is dark: " + Math.floor(c1Lum*100));
     color2 = [
       hueOverflow(color1[0]+150),
       Math.random()*0.6+0.4,
@@ -37,7 +107,7 @@ function generatePalette() { // split comp 3 colors
       Math.random()*0.2+0.8];
 
   } else if (c1Lum < 0.67) { // color 1 is medium
-    console.log("color 1 is medium: " + Math.floor(c1Lum*100));
+    // console.log("color 1 is medium: " + Math.floor(c1Lum*100));
     color2 = [
       hueOverflow(color1[0]+150),
       Math.random()*0.4+0.4,
@@ -48,7 +118,7 @@ function generatePalette() { // split comp 3 colors
       Math.random()*0.15+0.85];
 
   } else { // color 1 is light
-    console.log("color 1 is light: " + Math.floor(c1Lum*100));
+    // console.log("color 1 is light: " + Math.floor(c1Lum*100));
     color2 = [
       hueOverflow(color1[0]+150),
       Math.random(),
@@ -114,12 +184,14 @@ function addBookToLibrary(book) {
 }
 
 function displayAll() {
+  console.log("Displaying All");
+
   const cardContainer = document.querySelector('.card-container');
 
   removeAllChildren(cardContainer);
 
   myLibrary.forEach(book => {
-    // console.log(book.info());
+    // console.log(book);
     const bookCard = document.createElement('div');
     bookCard.style.backgroundColor = cText(book.colors[0]);
     bookCard.classList.add("card");
@@ -130,25 +202,58 @@ function displayAll() {
     //   `rgb(${Math.random()*255},${Math.random()*255},${Math.random()*255})`;
 
     const title = document.createElement('h1');
-    title.classList.add("title");
+    title.classList.add("title", "editable");
     title.style.color = cText(book.colors[1]);
+    title.setAttribute('data-bookId', book.bookId)
     title.textContent = book.title;
 
     const author = document.createElement('h2');
-    author.classList.add("author");
+    author.classList.add("author", "editable");
     author.style.color = cText(book.colors[2]);
+    author.setAttribute('data-bookId', book.bookId)
     author.textContent = book.author;
 
+    const pagesLine = document.createElement('div');
+    pagesLine.classList.add("pagesLine");
+
     const pages = document.createElement('p');
-    pages.classList.add("pages");
+    pages.classList.add("pages", "editable");
     pages.style.color = cText(book.colors[2]);
-    pages.textContent = `${book.pages} pages, ${book.isRead()}`;
+    pages.setAttribute('data-bookId', book.bookId)
+    pages.textContent = book.pages;
+
+    const read = document.createElement('p');
+    read.classList.add("read", "editable");
+    read.style.color = cText(book.colors[2]);
+    read.setAttribute('data-bookId', book.bookId)
+    read.textContent = book.isRead();
 
     // bookCard.appendChild(colorBlock);
     bookCard.appendChild(title);
     bookCard.appendChild(author);
-    bookCard.appendChild(pages);
+    bookCard.appendChild(pagesLine)
+    pagesLine.appendChild(pages);
+    pagesLine.appendChild(read);
     cardContainer.appendChild(bookCard);
+  });
+
+  makeListeners();
+}
+
+function deleteAll() {
+  if (confirm('Are you sure you want to delete your library?')) {
+    myLibrary = [];
+    displayAll();
+  }
+}
+
+function makeListeners() {
+  const editables = document.querySelectorAll('.editable');
+  editables.forEach(editable => {
+    editable.addEventListener('click',e=>{
+      // console.log(e.target);
+      takeInput(e.target);
+    });
   });
 }
 

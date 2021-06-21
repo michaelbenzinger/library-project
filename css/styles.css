@@ -8,38 +8,108 @@ html {
   justify-content: flex-start;
   align-items: center;
   height: 95vh;
-  width: 40em;
+  width: 38em;
   margin: 0 auto;
 }
 .card-container {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 1em 1.2em;
+  gap: 0.8em 1.2em;
+}
+.app-header {
+  width: 100%;
+}
+.title-bar {
+  border-bottom: 1px solid black;
+  padding-bottom: 0.4em;
+  min-height: 2em;
+}
+.options {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  margin: .8em 0 2em 0;
+}
+.options-left {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+.options-center {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.options-right {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
 }
 .card {
-  padding: 1.6em 1em 0 1em;
-  /* padding: 2em 0.8em 8.6em 0.8em; */
-  /* border: 1px solid rgb(192, 192, 192); */
-  border-radius: 0.5em;
-  /* max-width: 11em; */
-  height: 14em;
+  display: flex;
+  flex-direction: column;
+  padding: 1.6em 1em 1.5em 1em;
+  border-radius: 0.15em;
+  height: 12em;
 }
 .color-block {
-  /* background-color: dodgerblue; */
   padding: 5rem;
   margin-bottom: .8rem;
 }
+#app-title {
+  display: inline;
+  font-size: 1.5em;
+  font-weight: bold;
+}
 .title {
-  font-size: 1.8em;
+  font-size: 1.6em;
   font-weight: bold;
   margin-bottom: 0.5rem;
   width: 80%;
 }
 .author {
-  font-size: 1.2em;
+  font-size: 1.1em;
   margin-bottom: 0.5rem;
+  width: 90%;
+}
+.pagesLine {
+  margin-top: auto;
 }
 .pages {
+  display: inline;
+  margin-bottom: -.3em;
   font-size: 0.9em;
   color: rgb(85, 85, 85);
+}
+.pages::after {
+  content: ' pages, ';
+}
+.read {
+  display: inline;
+  margin-bottom: -.3em;
+  font-size: 0.9em;
+  color: rgb(85, 85, 85);
+}
+.editable {
+  cursor: default;
+  transition: color 0.2s;
+}
+.editable:hover {
+  color: rgb(148, 148, 148) !important;
+}
+.elementInput {
+  font-family: Helvetica, Arial, sans-serif;
+  border: 0.5px solid rgb(155, 155, 155);
+  border: hidden;
+  background-color: rgba(255,255,255,0.6);
+  border-radius: 0em;
+  outline: none;
+  margin: -1px;
+  padding: 0;
+  line-height: 1;
+  display: inline;
+  -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+  -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+  box-sizing: border-box;         /* Opera/IE 8+ */
+  resize: none;
+  overflow: hidden;
 }
