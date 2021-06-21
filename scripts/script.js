@@ -1,5 +1,7 @@
 let myLibrary = [];
+let libraryName = "Library";
 const cardContainer = document.querySelector('.card-container');
+const titleBar = document.querySelector('.title-bar');
 let bookId = 1000;
 
 function Book(title, author, pages, read) {
@@ -19,14 +21,14 @@ function Book(title, author, pages, read) {
   bookId ++;
 }
 
-const titleBar = document.querySelector('.title-bar');
-
 function takeInput (element) {
+  // create a new input field
   const inputField = document.createElement('textarea');
   inputField.classList.add('elementInput');
+
+  // style the input field
   inputField.setAttribute('placeholder', element.innerText);
   inputField.style.width = getComputedStyle(element).width;
-  console.log(getComputedStyle(element).width);
   inputField.style.height = element.offsetHeight + "px";
   eFS = getComputedStyle(element).fontSize;
   eFS = eFS.substring(0, eFS.length - 2);
@@ -35,48 +37,58 @@ function takeInput (element) {
   inputField.style.margin = getComputedStyle(element).margin;
   inputField.style.padding = getComputedStyle(element).padding;
 
-  inputField.addEventListener('focusout', function(e) {
-    applyInput(element);
-  });
+  // on pressing Enter, focusout
   inputField.addEventListener('keydown', function(e) {
     if (e.code == 'Enter') {
       this.blur();
     }
   });
 
+  // on focusout, apply the input to the element
+  inputField.addEventListener('focusout', function(e) {
+    applyInput(element);
+  });
+
+  // hide the original element
   element.style.display = "none";
+
+  // insert the input field before the original element
   element.parentElement.insertBefore(inputField,element);
+
+  // apply focus to the input field
   inputField.focus();
 }
 
 function applyInput (element) {
   const completedInput = document.querySelector('.elementInput');
   const userInput = completedInput.value;
+
   if (userInput != "") {
-    // element.innerText = userInput;
-    // console.log(element.getAttribute('data-bookId'));
-    let thisBook = myLibrary.find(book => {
-      return book.bookId == element.getAttribute('data-bookId');
-    });
-    // console.log(element.classList[0]);
-    // console.log(userInput);
-    if (element.classList[0]=='read') {
-      if (userInput == "read" || userInput == "true") {
-        thisBook.read = true;
-      } else if (userInput == "not read yet" || userInput == "false") {
-        thisBook.read = false;
-      }
-    } else if (element.classList[0]=='pages') {
-      if (Number.isInteger(userInput)) {
-        thisBook.pages = userInput;
-      }
+    console.log(`Setting ${element.innerText} to ${completedInput.value}`);
+    if (element.id=="app-title") {
+      libraryName = userInput;
     } else {
-      thisBook[element.classList[0]] = userInput;
+      let thisBook = myLibrary.find(book => {
+        return book.bookId == element.getAttribute('data-bookId');
+      });
+      if (element.classList[0]=='read') {
+        if (userInput == "read" || userInput == "true") {
+          thisBook.read = true;
+        } else if (userInput == "not read yet" || userInput == "false") {
+          thisBook.read = false;
+        }
+      } else if (element.classList[0]=='pages') {
+        if (Number.isInteger(userInput)) {
+          thisBook.pages = userInput;
+        }
+      } else {
+        thisBook[element.classList[0]] = userInput;
+      }
     }
-    console.log(thisBook);
   }
+
   completedInput.remove();
-  // element.style.display = "inline"
+  element.style.display = "inline"
   displayAll();
 }
 
@@ -186,57 +198,69 @@ function addBookToLibrary(book) {
 function displayAll() {
   console.log("Displaying All");
 
-  const cardContainer = document.querySelector('.card-container');
+  // Set new App Title
+  removeAllChildren(titleBar);
+  const appTitle = document.createElement('h1');
+  appTitle.id = 'app-title';
+  appTitle.classList.add('editable');
+  appTitle.innerText = libraryName;
+  titleBar.appendChild(appTitle);
 
+  // Get rid of all existing cards
+  const cardContainer = document.querySelector('.card-container');
   removeAllChildren(cardContainer);
 
+  // Display all books in myLibrary as cards
   myLibrary.forEach(book => {
     // console.log(book);
     const bookCard = document.createElement('div');
     bookCard.style.backgroundColor = cText(book.colors[0]);
     bookCard.classList.add("card");
 
-    // const colorBlock = document.createElement('div');
-    // colorBlock.classList.add("color-block");
-    // colorBlock.style["background-color"] =
-    //   `rgb(${Math.random()*255},${Math.random()*255},${Math.random()*255})`;
-
+    // Create title and link to bookId
     const title = document.createElement('h1');
     title.classList.add("title", "editable");
     title.style.color = cText(book.colors[1]);
     title.setAttribute('data-bookId', book.bookId)
     title.textContent = book.title;
 
+    // Create author and link to bookId
     const author = document.createElement('h2');
     author.classList.add("author", "editable");
     author.style.color = cText(book.colors[2]);
     author.setAttribute('data-bookId', book.bookId)
     author.textContent = book.author;
 
+    // Create pagesLine (container)
     const pagesLine = document.createElement('div');
     pagesLine.classList.add("pagesLine");
 
+    // Create pages and link to bookId
     const pages = document.createElement('p');
     pages.classList.add("pages", "editable");
     pages.style.color = cText(book.colors[2]);
     pages.setAttribute('data-bookId', book.bookId)
     pages.textContent = book.pages;
 
+    // Create read and link to bookId
     const read = document.createElement('p');
     read.classList.add("read", "editable");
     read.style.color = cText(book.colors[2]);
     read.setAttribute('data-bookId', book.bookId)
     read.textContent = book.isRead();
 
-    // bookCard.appendChild(colorBlock);
+    // Add all elements to the bookCard
     bookCard.appendChild(title);
     bookCard.appendChild(author);
     bookCard.appendChild(pagesLine)
     pagesLine.appendChild(pages);
     pagesLine.appendChild(read);
+
+    // Add the card to the container
     cardContainer.appendChild(bookCard);
   });
 
+  // Create a listener on everything with the editable class
   makeListeners();
 }
 
@@ -248,10 +272,11 @@ function deleteAll() {
 }
 
 function makeListeners() {
+
+  // on every editable element, takeInput() on click
   const editables = document.querySelectorAll('.editable');
   editables.forEach(editable => {
-    editable.addEventListener('click',e=>{
-      // console.log(e.target);
+    editable.addEventListener('click', e => {
       takeInput(e.target);
     });
   });
