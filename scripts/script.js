@@ -1,7 +1,13 @@
 let myLibrary = [];
-let libraryName = "Library";
+let libraryName = "Untitled Library";
 const cardContainer = document.querySelector('.card-container');
 const titleBar = document.querySelector('.title-bar');
+const addBookBtn = document.querySelector('.add-book');
+addBookBtn.addEventListener('click', function(e) {
+  const newBook = new Book('Title','Author', 100, false);
+  addBookToLibrary(newBook);
+  displayAll();
+});
 let bookId = 1000;
 
 function Book(title, author, pages, read) {
@@ -28,7 +34,11 @@ function takeInput (element) {
 
   // style the input field
   inputField.setAttribute('placeholder', element.innerText);
-  inputField.style.width = getComputedStyle(element).width;
+  if (element.id == 'app-title'){
+    inputField.style.width = '100%';
+  } else {
+    inputField.style.width = element.offsetWidth + "px";
+  }
   inputField.style.height = element.offsetHeight + "px";
   eFS = getComputedStyle(element).fontSize;
   eFS = eFS.substring(0, eFS.length - 2);
@@ -78,8 +88,8 @@ function applyInput (element) {
           thisBook.read = false;
         }
       } else if (element.classList[0]=='pages') {
-        if (Number.isInteger(userInput)) {
-          thisBook.pages = userInput;
+        if (Number.isInteger(parseInt(userInput))) {
+          thisBook.pages = parseInt(userInput);
         }
       } else {
         thisBook[element.classList[0]] = userInput;
@@ -192,7 +202,7 @@ function cText(color) {
 }
 
 function addBookToLibrary(book) {
-  myLibrary.push(book);
+  myLibrary.unshift(book);
 }
 
 function displayAll() {
@@ -288,16 +298,43 @@ function removeAllChildren(parent) {
   }
 }
 
-const theHobbit = new Book("The Hobbit", "J.R.R. Tolkien", 295, false);
-const theBible = new Book("The Bible", "Multiple Authors", 2403, true);
-const whereTheCrawdadsSing = new Book("Where the Crawdads Sing", "Delia Owens", 387, false);
-const theBible2 = new Book("The Bible", "Multiple Authors", 2403, true);
-const whereTheCrawdadsSing2 = new Book("Where the Crawdads Sing", "Delia Owens", 387, false);
+function sortLibrary(sortOption) {
+  console.log('Sorting by ' + sortOption);
+  if (sortOption == 'bookId') {
+    myLibrary.sort((x, y) => {
+      if (x[sortOption] < y[sortOption]) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
+  } else {
+    myLibrary.sort((x, y) => {
+      if (x[sortOption] > y[sortOption]) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
+  }
+}
 
-addBookToLibrary(theHobbit);
-addBookToLibrary(theBible);
-addBookToLibrary(whereTheCrawdadsSing);
-addBookToLibrary(theBible2);
-addBookToLibrary(whereTheCrawdadsSing2);
+function newSort(sortOption) {
+  sortLibrary(sortOption);
+  displayAll();
+}
 
+// const theHobbit = new Book("A Book", "J.R.R. Tolkien", 295, false);
+// const theBible = new Book("C Book", "Multiple Authors", 2403, true);
+// const whereTheCrawdadsSing = new Book("E Book", "Delia Owens", 387, false);
+// const theBible2 = new Book("B Book", "Multiple Authors", 2403, true);
+// const whereTheCrawdadsSing2 = new Book("D Book", "Delia Owens", 387, false);
+
+// addBookToLibrary(theHobbit);
+// addBookToLibrary(theBible);
+// addBookToLibrary(whereTheCrawdadsSing);
+// addBookToLibrary(theBible2);
+// addBookToLibrary(whereTheCrawdadsSing2);
+
+sortLibrary('bookId');
 displayAll();

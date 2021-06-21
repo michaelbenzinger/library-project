@@ -35,10 +35,14 @@
       </div>
       <div class="options">
         <div class="options-left">
-          <button>Add Book</button>
+          <button class="add-book">Add Book</button>
         </div>
         <div class="options-center">
-          <button>Sort</button>
+          <select name="sort" id="sort" onclick="newSort(this.value)">
+            <option value="title">Title</option>
+            <option value="author">Author</option>
+            <option value="bookId" selected>Date Added</option>
+          </select>
         </div>
         <div class="options-right">
           <button onclick="deleteAll()">Delete All</button>
