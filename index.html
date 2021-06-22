@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
 
   <title>Project: Library</title>
+  <script src="https://kit.fontawesome.com/b1334213ec.js" crossorigin="anonymous"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/meyerreset.css">
   <link rel="stylesheet" href="css/styles.css">
@@ -30,22 +35,25 @@
   <!-- <p>Hello, world!</p> -->
   <div class="app-container">
     <div class="app-header">
+
       <div class="title-bar">
-      
+
       </div>
       <div class="options">
         <div class="options-left">
-          <button class="add-book">Add Book</button>
+          <i class="add-book fas fa-plus-circle"></i>
+          <!-- <button class="add-book">Add Book</button> -->
         </div>
         <div class="options-center">
-          <select name="sort" id="sort" onclick="newSort(this.value)">
+          <select class="select" name="sort" id="sort" onclick="newSort(this.value)">
             <option value="title">Title</option>
             <option value="author">Author</option>
-            <option value="bookId" selected>Date Added</option>
+            <option value="bookId">Date Added</option>
           </select>
         </div>
         <div class="options-right">
-          <button onclick="deleteAll()">Delete All</button>
+          <!-- <button onclick="deleteAll()">Delete All</button> -->
+          <i class="delete-all fas fa-trash" onclick="deleteAll()"></i>
         </div>
       </div>
     </div>
@@ -59,5 +67,8 @@
     </div>
   </div>
   <script src="scripts/script.js"></script>
-</body>
+  </body>
+  <footer class="app-footer">
+    <div>Made by <a href="https://github.com/michaelbenzinger" id="my-name" target="_blank">Michael Benzinger</a></div>
+  </footer>
 </html>

@@ -1,5 +1,7 @@
-let myLibrary = [];
-let libraryName = "Untitled Library";
+let myLibrary;
+let libraryName;
+let sortOption;
+let bookId;
 const cardContainer = document.querySelector('.card-container');
 const titleBar = document.querySelector('.title-bar');
 const addBookBtn = document.querySelector('.add-book');
@@ -8,7 +10,19 @@ addBookBtn.addEventListener('click', function(e) {
   addBookToLibrary(newBook);
   displayAll();
 });
-let bookId = 1000;
+
+// localStorage.clear();
+
+if(!localStorage.getItem('myLibrary')) {
+  console.log("Populating with Template");
+  populateLibrary();
+} else {
+  console.log("Setting from Storage");
+  setLibraryFromStorage();
+}
+
+sortLibrary(sortOption);
+displayAll();
 
 function Book(title, author, pages, read) {
   this.title = title;
@@ -21,7 +35,7 @@ function Book(title, author, pages, read) {
   //   return `${title} by ${author}, ${pages} pages, ${readText}`;
   // }
   this.isRead = function() {
-    return this.read ? "read" : "not read yet";
+    return this.read ? "read" : "not read";
   }
   this.bookId = bookId;
   bookId ++;
@@ -44,12 +58,13 @@ function takeInput (element) {
   eFS = eFS.substring(0, eFS.length - 2);
   inputField.style.fontSize = eFS + 'px';
   inputField.style.fontWeight = getComputedStyle(element).fontWeight;
+  inputField.style.letterSpacing = getComputedStyle(element).letterSpacing;
   inputField.style.margin = getComputedStyle(element).margin;
   inputField.style.padding = getComputedStyle(element).padding;
 
   // on pressing Enter, focusout
   inputField.addEventListener('keydown', function(e) {
-    if (e.code == 'Enter') {
+    if (e.code == 'Enter' || e.code == 'NumpadEnter') {
       this.blur();
     }
   });
@@ -74,7 +89,7 @@ function applyInput (element) {
   const userInput = completedInput.value;
 
   if (userInput != "") {
-    console.log(`Setting ${element.innerText} to ${completedInput.value}`);
+    // console.log(`Setting ${element.innerText} to ${completedInput.value}`);
     if (element.id=="app-title") {
       libraryName = userInput;
     } else {
@@ -206,7 +221,7 @@ function addBookToLibrary(book) {
 }
 
 function displayAll() {
-  console.log("Displaying All");
+  // console.log("Displaying All");
 
   // Set new App Title
   removeAllChildren(titleBar);
@@ -226,11 +241,48 @@ function displayAll() {
     const bookCard = document.createElement('div');
     bookCard.style.backgroundColor = cText(book.colors[0]);
     bookCard.classList.add("card");
+    
+    // Create container for delete and color buttons
+    const btnCon = document.createElement('div');
+    btnCon.style.color = cText(book.colors[1]);
+    btnCon.classList.add("button-container");
+
+    // Create book-delete button
+    const bDel = document.createElement('i');
+    bDel.classList.add("fas", "fa-trash", "book-delete", "book-btn");
+    bDel.setAttribute('data-bookId', book.bookId)
+    bDel.addEventListener('click', function(e) {
+      if (confirm('Delete ' + book.title + '?')){
+        deleteThis(e);
+        displayAll();
+      }
+    });
+    // bDel.textContent = "del";
+
+    // Create book-color button
+    const bCol = document.createElement('i');
+    bCol.classList.add("fas", "fa-palette", "book-color", "book-btn");
+    bCol.setAttribute('data-bookId', book.bookId)
+    bCol.addEventListener('click', function(e) {
+      book.colors = generatePalette();
+      displayAll();
+    });
+    // bCol.textContent = "col";
 
     // Create title and link to bookId
     const title = document.createElement('h1');
     title.classList.add("title", "editable");
     title.style.color = cText(book.colors[1]);
+    // console.log(book.title + ": " + book.title.length);
+    if (book.title.length < 14) {
+      title.style.fontSize = '1.7em';
+    } else if (book.title.length < 16) {
+      title.style.fontSize = '1.6em';
+    } else if (book.title.length < 20) {
+      title.style.fontSize = '1.5em';
+    } else {
+      title.style.fontSize = '1.5em';
+    }
     title.setAttribute('data-bookId', book.bookId)
     title.textContent = book.title;
 
@@ -257,9 +309,12 @@ function displayAll() {
     read.classList.add("read", "editable");
     read.style.color = cText(book.colors[2]);
     read.setAttribute('data-bookId', book.bookId)
-    read.textContent = book.isRead();
+    read.textContent = book.read ? "read" : "not read";
 
     // Add all elements to the bookCard
+    bookCard.appendChild(btnCon);
+    btnCon.appendChild(bDel);
+    btnCon.appendChild(bCol);
     bookCard.appendChild(title);
     bookCard.appendChild(author);
     bookCard.appendChild(pagesLine)
@@ -272,13 +327,27 @@ function displayAll() {
 
   // Create a listener on everything with the editable class
   makeListeners();
+
+  // Update localStorage with current Library, name, and sort option
+  localStorage.setItem('myLibrary', JSON.stringify(myLibrary));
+  localStorage.setItem('libraryName', libraryName);
+  localStorage.setItem('sortOption', sortOption);
+  localStorage.setItem('bookId', bookId);
 }
 
 function deleteAll() {
   if (confirm('Are you sure you want to delete your library?')) {
     myLibrary = [];
+    libraryName = 'Untitled Library';
     displayAll();
   }
+}
+
+function deleteThis(e) {
+  const newLibrary = myLibrary.filter(book => {
+    return book.bookId.toString() != e.target.getAttribute('data-bookid')
+  });
+  myLibrary = newLibrary;
 }
 
 function makeListeners() {
@@ -287,7 +356,17 @@ function makeListeners() {
   const editables = document.querySelectorAll('.editable');
   editables.forEach(editable => {
     editable.addEventListener('click', e => {
-      takeInput(e.target);
+      let thisBook = myLibrary.find(book => book.bookId.toString() == e.target.getAttribute('data-bookid'));
+      if (e.target.classList[0] == "read") {
+        if (e.target.innerText == "read") {
+          thisBook.read = false;
+        } else {
+          thisBook.read = true;
+        }
+        displayAll();
+      } else {
+        takeInput(e.target);
+      }
     });
   });
 }
@@ -298,8 +377,8 @@ function removeAllChildren(parent) {
   }
 }
 
-function sortLibrary(sortOption) {
-  console.log('Sorting by ' + sortOption);
+function sortLibrary() {
+  // console.log('Sorting by ' + sortOption);
   if (sortOption == 'bookId') {
     myLibrary.sort((x, y) => {
       if (x[sortOption] < y[sortOption]) {
@@ -319,22 +398,77 @@ function sortLibrary(sortOption) {
   }
 }
 
-function newSort(sortOption) {
-  sortLibrary(sortOption);
+function newSort(sortOp) {
+  sortOption = sortOp;
+  sortLibrary();
   displayAll();
 }
 
-// const theHobbit = new Book("A Book", "J.R.R. Tolkien", 295, false);
-// const theBible = new Book("C Book", "Multiple Authors", 2403, true);
-// const whereTheCrawdadsSing = new Book("E Book", "Delia Owens", 387, false);
-// const theBible2 = new Book("B Book", "Multiple Authors", 2403, true);
-// const whereTheCrawdadsSing2 = new Book("D Book", "Delia Owens", 387, false);
+function populateLibrary() {
+  myLibrary = [];
+  libraryName = 'Untitled Library';
+  localStorage.setItem('libraryName', libraryName);
+  sortOption = 'title';
+  localStorage.setItem('sortOption', sortOption);
+  bookId = 1000;
+  localStorage.setItem('bookId', bookId);
+  
+  const pop1 = new Book("The Hobbit", "J.R.R. Tolkien", 295, true);
+  const pop2 = new Book("The Push", "Ashley Audrain", 320, false);
+  const pop3 = new Book("Where the Crawdads Sing", "Delia Owens", 387, true);
+  const pop4 = new Book("My Year Abroad", "Chang Rae-Lee", 496, false);
+  const pop5 = new Book("The Martian", "Andy Weir", 384, true);
 
-// addBookToLibrary(theHobbit);
-// addBookToLibrary(theBible);
-// addBookToLibrary(whereTheCrawdadsSing);
-// addBookToLibrary(theBible2);
-// addBookToLibrary(whereTheCrawdadsSing2);
+  // console.log("Adding some books...");
 
-sortLibrary('bookId');
-displayAll();
+  addBookToLibrary(pop1);
+  addBookToLibrary(pop2);
+  addBookToLibrary(pop3);
+  addBookToLibrary(pop4);
+  addBookToLibrary(pop5);
+}
+
+function setLibraryFromStorage() {
+  myLibrary = JSON.parse(localStorage.getItem('myLibrary'));
+  libraryName = localStorage.getItem('libraryName');
+  sortOption = localStorage.getItem('sortOption');
+  bookId = parseInt(localStorage.getItem('bookId'));
+  const sorts = document.querySelectorAll('option');
+  sorts.forEach(sorter => {
+    if (sorter.value == sortOption) {
+      sorter.setAttribute('selected', true);
+    }
+  })
+}
+
+function storageAvailable(type) {
+  var storage;
+  try {
+      storage = window[type];
+      var x = '__storage_test__';
+      storage.setItem(x, x);
+      storage.removeItem(x);
+      return true;
+  }
+  catch(e) {
+      return e instanceof DOMException && (
+          // everything except Firefox
+          e.code === 22 ||
+          // Firefox
+          e.code === 1014 ||
+          // test name field too, because code might not be present
+          // everything except Firefox
+          e.name === 'QuotaExceededError' ||
+          // Firefox
+          e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+          // acknowledge QuotaExceededError only if there's something already stored
+          (storage && storage.length !== 0);
+  }
+}
+
+function startFresh() {
+  myLibrary = [];
+  populateLibrary();
+  sortLibrary(sortOption);
+  displayAll();
+}

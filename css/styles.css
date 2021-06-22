@@ -1,30 +1,48 @@
+:root {
+  --main-text: rgb(29, 150, 231);
+  --main-background: rgb(241, 249, 250);
+  --title-text: rgb(41,41,41);
+  --footer-background: rgb(59, 109, 173);
+}
 html {
-  padding: 1em;
-  font-family: Helvetica, Arial, sans-serif
+  font-family: Ubuntu, Helvetica, Arial, sans-serif;
+  background-color: var(--main-background, rgb(250,250,250));
+  user-select: none;
 }
 .app-container {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  height: 95vh;
-  width: 38em;
+  width: 37em;
+  min-height: 82vh;
+  padding: 1em 10em 10em 10em;
   margin: 0 auto;
+  background-color: white;
+  box-shadow: 0 0 12em rgba(245, 188, 188, 0.2);
 }
 .card-container {
   display: grid;
   width: 100%;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 0.8em 1.2em;
+  grid-template-columns: 31% 31% 31%;
+  gap: 2em 3.5%;
 }
 .app-header {
   width: 100%;
 }
 .title-bar {
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid rgb(204, 204, 204);
+  color: var(--title-text, rgb(41,41,41));
   padding-bottom: 0.4em;
   margin-top: 2em;
   min-height: 2em;
+}
+#app-title {
+  display: block;
+  font-size: 1.7em;
+  font-weight: 600;
+  letter-spacing: -0.01rem;
+  padding-bottom: 0.3em;
 }
 .options {
   display: grid;
@@ -46,40 +64,81 @@ html {
   flex-direction: row;
   justify-content: flex-end;
 }
+.editable {
+  cursor: default;
+  transition: color 0.2s, opacity 0.2s;
+}
+.editable:hover {
+  /* color: rgb(148, 148, 148) !important; */
+  opacity: 0.6;
+}
 .card {
+  position: relative;
   display: flex;
   flex-direction: column;
   padding: 1.6em 1em 1.5em 1em;
   border-radius: 0.15em;
-  height: 12em;
+  height: 13em;
+  transition: box-shadow 0.3s, opacity 0.3s;
+  box-shadow: 0 0.1em 0.2em rgba(0,0,0,0.4);
+}
+.card:hover {
+  /* transform: scale(1.02, 1.02); */
+  opacity: 0.95;
+  box-shadow: 0 0.2em 0.4em rgba(0,0,0,0.4);
+}
+.card:hover .button-container {
+  display: block;
+  opacity: 100%;
 }
 .color-block {
   padding: 5rem;
   margin-bottom: .8rem;
 }
-#app-title {
-  display: inline;
-  font-size: 1.5em;
-  font-weight: bold;
+.button-container {
+  opacity: 0%;
+  position: absolute;
+  right: 0.8em;
+  padding-top: 0.2em;
+  transition: opacity 0.3s;
 }
+.book-btn {
+  display: block;
+  text-align: center;
+  font-size: 1.2em;
+  padding-bottom: 0.6em;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.book-btn:hover {
+  opacity: 0.6;
+}
+/* .book-delete {
+
+}
+.book-color {
+  
+} */
 .title {
-  font-size: 1.6em;
-  font-weight: bold;
+  font-size: 1.55em;
+  font-weight: 700;
   margin-bottom: 0.5rem;
   width: 80%;
 }
 .author {
-  font-size: 1.1em;
+  font-size: 1.15em;
+  font-weight: 400;
   margin-bottom: 0.5rem;
   width: 90%;
 }
 .pagesLine {
   margin-top: auto;
+  font-weight: 400;
+  font-size: 0.9em;
 }
 .pages {
   display: inline;
   margin-bottom: -.3em;
-  font-size: 0.9em;
   color: rgb(85, 85, 85);
 }
 .pages::after {
@@ -88,21 +147,38 @@ html {
 .read {
   display: inline;
   margin-bottom: -.3em;
-  font-size: 0.9em;
   color: rgb(85, 85, 85);
+  cursor: pointer;
 }
-.editable {
-  cursor: default;
-  transition: color 0.2s;
+.add-book {
+  font-size: 1.3em;
+  color: var(--main-text, black);
+  cursor: pointer;
+  opacity: 0.8;
+  text-shadow: 0 0.2em 0.5em rgba(0,0,0,0.05);
+  transition: color 0.2s, opacity 0.2s, text-shadow 0.2s;
 }
-.editable:hover {
-  color: rgb(148, 148, 148) !important;
+.add-book:hover {
+  color: limegreen;
+  text-shadow: 0 0.2em 0.5em rgba(0,0,0,0.15);
+}
+.delete-all {
+  font-size: 1.3em;
+  color: var(--main-text, black);
+  cursor: pointer;
+  opacity: 0.8;
+  text-shadow: 0 0.2em 0.5em rgba(0,0,0,0.05);
+  transition: color 0.2s, opacity 0.2s, text-shadow 0.2s;
+}
+.delete-all:hover {
+  color: crimson;
+  text-shadow: 0 0.2em 0.5em rgba(0,0,0,0.15);
 }
 .elementInput {
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: Ubuntu, Helvetica, Arial, sans-serif;
   border: 0.5px solid rgb(155, 155, 155);
   border: hidden;
-  background-color: rgba(190,190,190,0.2);
+  background-color: rgba(236, 236, 236, 0.6);
   border-radius: 0em;
   outline: none;
   margin: -1px;
@@ -116,5 +192,57 @@ html {
   overflow: hidden;
 }
 .elementInput::placeholder {
-  color: rgba(0,0,0,0.8);
+  color: rgba(0,0,0,0.4);
+}
+i {
+  padding: 0 0.2em;
+}
+
+select {
+  font-family: Ubuntu, Helvetica, Arial, sans-serif;
+  font-size: 0.9em;
+  padding: 0.1em;
+  width: 10rem;
+}
+.app-footer {
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 2.5em;
+  width: 100%;
+  background-color: var(--footer-background, dodgerBlue);
+  color: var(--main-background, white);
+}
+#my-name {
+  font-weight: 700;
+  color: var(--main-background, white);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+#my-name:hover {
+  opacity: 80%;
+}
+@media only screen and (max-width: 1000px) {
+  html {
+    font-size: 1.2em;
+  }
+  .app-container {
+    width: 66vw;
+    min-height: 82vh;
+    padding: 1em 9em 10em 9em;
+  }
+  .card-container {
+    grid-template-columns: 48% 48%;
+    gap: 2em 4%;
+  }
+  .card {
+    padding: 1.6em 1em 1.5em 1em;
+    height: 20vh;
+    font-size: 1.5vh;
+    transition: box-shadow 0.3s, opacity 0.3s;
+    box-shadow: 0 0.1em 0.2em rgba(0,0,0,0.4);
+  }
 }
