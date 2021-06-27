@@ -24,22 +24,39 @@ if(!localStorage.getItem('myLibrary')) {
 sortLibrary(sortOption);
 displayAll();
 
-function Book(title, author, pages, read) {
-  this.title = title;
-  this.author = author;
-  this.pages = pages;
-  this.read = read;
-  this.colors = generatePalette();
-  // this.info = function() {
-  //   let readText = read ? "read" : "not read yet"
-  //   return `${title} by ${author}, ${pages} pages, ${readText}`;
-  // }
-  this.isRead = function() {
+class Book {
+  constructor(title, author, pages, read) {
+    this.title = title;
+    this.author = author;
+    this.pages = pages;
+    this.read = read;
+    this.bookId = bookId;
+    bookId ++;
+    this.colors = generatePalette();
+  }
+  isRead() {
     return this.read ? "read" : "not read";
   }
-  this.bookId = bookId;
-  bookId ++;
 }
+
+// old function syntax
+
+// function Book(title, author, pages, read) {
+//   this.title = title;
+//   this.author = author;
+//   this.pages = pages;
+//   this.read = read;
+//   this.colors = generatePalette();
+//   // this.info = function() {
+//   //   let readText = read ? "read" : "not read yet"
+//   //   return `${title} by ${author}, ${pages} pages, ${readText}`;
+//   // }
+//   this.isRead = function() {
+//     return this.read ? "read" : "not read";
+//   }
+//   this.bookId = bookId;
+//   bookId ++;
+// }
 
 function takeInput (element) {
   // create a new input field
