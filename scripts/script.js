@@ -11,19 +11,6 @@ addBookBtn.addEventListener('click', function(e) {
   displayAll();
 });
 
-// localStorage.clear();
-
-if(!localStorage.getItem('myLibrary')) {
-  console.log("Populating with Template");
-  populateLibrary();
-} else {
-  console.log("Setting from Storage");
-  setLibraryFromStorage();
-}
-
-sortLibrary(sortOption);
-displayAll();
-
 class Book {
   constructor(title, author, pages, read) {
     this.title = title;
@@ -38,6 +25,19 @@ class Book {
     return this.read ? "read" : "not read";
   }
 }
+
+// localStorage.clear();
+
+if(!localStorage.getItem('myLibrary')) {
+  console.log("Populating with Template");
+  populateLibrary();
+} else {
+  console.log("Setting from Storage");
+  setLibraryFromStorage();
+}
+
+sortLibrary(sortOption);
+displayAll();
 
 // old function syntax
 
